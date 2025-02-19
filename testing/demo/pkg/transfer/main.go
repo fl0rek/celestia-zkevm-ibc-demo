@@ -83,6 +83,6 @@ func submitMsgTransfer(msg channeltypesv2.MsgSendPacket) (txHash string, err err
 	if response.Code != 0 {
 		return "", fmt.Errorf("failed to execute MsgTransfer %v", response.RawLog)
 	}
-	fmt.Printf("Broadcasted MsgTransfer. Response code: %v, tx hash: %v\n", response.Code, response.TxHash)
+	fmt.Printf("Broadcasted MsgTransfer. Response code: %v, tx hash: %v, height: %d\n", response.Code, response.TxHash, response.Height)
 	return response.TxHash, nil
 }

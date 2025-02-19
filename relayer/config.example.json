@@ -1,0 +1,33 @@
+{
+  "server": {
+    "log_level": "info",
+    "address": "127.0.0.1"
+  },
+  "modules": [
+    {
+      "name": "cosmos_to_eth",
+      "port": 3000,
+      "tm_rpc_url": "http://localhost:5123",
+      "ics26_router": "0xb1c938f5ba4b3593377f399e12175e8db0c787ff",
+      "ics02_client": "0x48fd1226d797400779bbfaf1706f5fb8da04ae91",
+      "ics07_tendermint": "0xe2c1756b8825c54638f98425c113b51730cc47f6",
+      "eth_rpc_url": "http://localhost:8545",
+      "eth_private_key": "0x82bfcfadbf1712f6550d8d2c00a39f05b33ec78939d0167be2a737d691f33a6a",
+      "prover_url": "grpc://localhost:50051"
+    }
+  ],
+  "disabled_modules": [
+    {
+      "name": "eth_to_cosmos",
+      "port": 3000,
+      "config": {
+        "tm_rpc_url": "http://localhost:5123",
+        "ics26_address": "0xb1c938f5ba4b3593377f399e12175e8db0c787ff",
+        "ics02_client": "0x48fd1226d797400779bbfaf1706f5fb8da04ae91",
+        "eth_rpc_url": "http://localhost:8545",
+        "eth_beacon_api_url": "https://ethereum-holesky-beacon-api.publicnode.com",
+        "signer_address": "cosmos1abcdef1234567890abcdef1234567890"
+      }
+    }
+  ]
+}
