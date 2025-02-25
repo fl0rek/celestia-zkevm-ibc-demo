@@ -16,70 +16,75 @@ license = "MIT"
 ibc-eureka-relayer-lib = { path = "relayer-lib" }
 prover-client = { path = "prover-client" }
 
+# solidity-ibc-eureka submodule path dependencies
 ibc-eureka-solidity-types = { path = "../solidity-ibc-eureka/packages/solidity", default-features = false }
-
-clap               = { version = "4.5", default-features = false, features = ["std"] } # std feature is required for clap
-anyhow = "1.0.95"
-serde           = { version = "1.0", default-features = false }
-futures            = { version = "0.3", default-features = false }
-serde_json      = { version = "1.0", default-features = false }
-tracing-subscriber = { version = "0.3", default-features = false }
-async-trait        = { version = "0.1", default-features = false }
 ethereum-apis = { path = "../solidity-ibc-eureka/packages/ethereum/ethereum-apis" }
 ethereum-light-client = { path = "../solidity-ibc-eureka/packages/ethereum/ethereum-light-client" }
 ethereum-types = { path = "../solidity-ibc-eureka/packages/ethereum/ethereum-types" }
-futures-timer      = { version = "3.0", default-features = false }
-ibc-core-host-types         = { version = "0.56", default-features = false }
-sp1-prover = { version = "4.0", default-features = false }
-tendermint-light-client-verifier = { version = "0.40", default-features = false }
-thiserror          = { version = "2.0", default-features = false }
-schemars        = { version = "0.8", default-features = false }
-serde_with      = { version = "3.11", default-features = false }
 tree_hash = { path = "../solidity-ibc-eureka/packages/ethereum/tree_hash" }
-tree_hash_derive    = { version = "0.9", default-features = false }
-sha2 = { version = "0.10", default-features = false }
-smallvec      = { version = "1.6.1", default-features = false }
-ethereum_ssz        = { version = "0.8", default-features = false }
-ethereum_ssz_derive = { version = "0.8", default-features = false }
-rand = { version = "0.8.5", default-features = false }
-alloy-rlp              = { version = "0.3", default-features = false }
-alloy-trie             = { version = "0.7", default-features = false }
-ethereum-trie-db                   = { path = "../solidity-ibc-eureka/packages/ethereum/ethereum-trie-db", default-features = false }
-hex             = { version = "0.4", default-features = false }
+ethereum-trie-db = { path = "../solidity-ibc-eureka/packages/ethereum/ethereum-trie-db", default-features = false }
+sp1-ics07-tendermint-prover = { path = "../solidity-ibc-eureka/packages/sp1-ics07-tendermint-prover/", default-features = false }
+sp1-ics07-tendermint-utils = { path = "../solidity-ibc-eureka/packages/sp1-ics07-tendermint-utils/", default-features = false }
 
-alloy = { version = "0.9.2", features = ["providers"] }
-alloy-network          = { version = "0.9", default-features = false }
-alloy-signer-local     = { version = "0.9", default-features = false }
-milagro_bls   = { git = "https://github.com/Snowfork/milagro_bls", rev = "bc2b5b5e8d48b7e2e1bfaa56dc2d93e13cb32095", default-features = false } # Only used for testing, not to be used in production!
-hash-db            = { version = "0.16", default-features = false }
-hash256-std-hasher = { version = "0.15", default-features = false }
-memory-db          = { version = "0.32", default-features = false }
-primitive-types    = { version = "0.13", default-features = false }
-rlp                = { version = "0.6", default-features = false }
-rlp-derive         = { version = "0.2", default-features = false }
-sha3 = { version = "0.10", default-features = false }
-trie-db            = { version = "0.29", default-features = false }
-
-alloy-primitives = "0.9.2"
-alloy-provider = { version = "0.9.2", features = ["default"] }
-alloy-sol-types = { version = "0.8.0", default-features = false }
+# ibc 
+ibc-core-host-types = { version = "0.56", default-features = false }
 ibc-client-tendermint-types = "0.56"
 ibc-core-commitment-types = "0.56"
 ibc-proto = { version = "0.51", default-features = false }
 ibc-proto-eureka = { package = "ibc-proto", git = "https://github.com/srdtrk/ibc-proto-rs", rev = "9f550f7a582f09ee82bdf58a416631715e15bad7", default-features = false }
+
+# alloy
+alloy = { version = "0.9.2", features = ["providers"] }
+alloy-network = { version = "0.9", default-features = false }
+alloy-primitives = "0.9.2"
+alloy-provider = { version = "0.9.2", features = ["default"] }
+alloy-rlp = { version = "0.3", default-features = false }
+alloy-signer-local = { version = "0.9", default-features = false }
+alloy-sol-types = { version = "0.8.0", default-features = false }
+alloy-trie = { version = "0.7", default-features = false }
+
+# git dependencies
+milagro_bls = { git = "https://github.com/Snowfork/milagro_bls", rev = "bc2b5b5e8d48b7e2e1bfaa56dc2d93e13cb32095", default-features = false } # Only used for testing, not to be used in production!
+
+# all other
+bytes = "1.10.0"
+anyhow = "1.0.95"
+async-trait = { version = "0.1", default-features = false }
+clap = { version = "4.5", default-features = false, features = ["std"] } # std feature is required for clap
+ethereum_ssz = { version = "0.8", default-features = false }
+ethereum_ssz_derive = { version = "0.8", default-features = false }
+futures = { version = "0.3", default-features = false }
+futures-timer = { version = "3.0", default-features = false }
+hash-db = { version = "0.16", default-features = false }
+hash256-std-hasher = { version = "0.15", default-features = false }
+hex = { version = "0.4", default-features = false }
+memory-db = { version = "0.32", default-features = false }
+primitive-types = { version = "0.13", default-features = false }
 prost = "0.13"
 prost-types = "*"
+rand = { version = "0.8.5", default-features = false }
 reqwest = { version = "0.12", features = ["json"] }
-sp1-sdk = { version = "=4.0.1", default-features = false }
-tendermint-rpc = "0.40"
+rlp = { version = "0.6", default-features = false }
+rlp-derive = { version = "0.2", default-features = false }
+schemars = { version = "0.8", default-features = false }
+serde = { version = "1.0", default-features = false }
+serde_json = { version = "1.0", default-features = false }
+serde_with = { version = "3.11", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+sha3 = { version = "0.10", default-features = false }
+smallvec = { version = "1.6.1", default-features = false }
+sp1-prover = { version = "4.0.1", default-features = false }
+sp1-sdk = { version = "4.0.1", default-features = false }
 tendermint = "0.40.1"
+tendermint-light-client-verifier = { version = "0.40", default-features = false }
+tendermint-rpc = "0.40"
+thiserror = { version = "2.0", default-features = false }
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 tonic = { version = "0.12", features = ["transport", "codegen", "prost"] }
 tonic-build = "0.12"
 tonic-reflection = "0.12"
 tracing = { version = "0.1", default-features = false }
+tracing-subscriber = { version = "0.3", default-features = false }
+tree_hash_derive = { version = "0.9", default-features = false }
+trie-db = { version = "0.29", default-features = false }
 
-# The rev in the following dependencies should match the commit used by the
-# solidity-ibc-eureka submodule in this repo.
-sp1-ics07-tendermint-prover = { path = "../solidity-ibc-eureka/packages/sp1-ics07-tendermint-prover/", default-features = false }
-sp1-ics07-tendermint-utils = { path = "../solidity-ibc-eureka/packages/sp1-ics07-tendermint-utils/", default-features = false }

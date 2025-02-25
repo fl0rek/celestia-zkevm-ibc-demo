@@ -1,29 +1,29 @@
 [package]
-name       = "prover-client"
-version    = { workspace = true }
-edition    = { workspace = true }
-repository = { workspace = true }
-license    = { workspace = true }
+name = "prover-client"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [dependencies] # TODO: cleanup
+alloy = { workspace = true, features = ["full", "node-bindings"] }
+anyhow.workspace = true
+clap.workspace = true
+futures.workspace = true
+prost-types.workspace = true
+prost.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tendermint-rpc.workspace = true
+tendermint.workspace = true
 tokio = { workspace = true, default-features = true }
 tonic = { workspace = true, default-features = true }
-
-tracing            = { workspace = true, default-features = true }
-tracing-subscriber = { workspace = true, default-features = true }
-clap               = { workspace = true, default-features = true }
-anyhow             = { workspace = true, default-features = true }
-futures            = { workspace = true, default-features = true }
-
-serde      = { workspace = true, default-features = true }
-serde_json = { workspace = true, default-features = true }
-prost      = { workspace = true, default-features = true }
-prost-types      = { workspace = true, default-features = true }
-
-alloy = { workspace = true, features = ["full", "node-bindings"] }
-
-tendermint     = { workspace = true }
-tendermint-rpc = { workspace = true }
+tracing-subscriber.workspace = true
+tracing.workspace = true
+thiserror.workspace = true
+http-body = "1"
+celestia-grpc-macros = "0.2.0"
+bytes.workspace = true
 
 [build-dependencies]
 tonic-build = { workspace = true, default-features = true }

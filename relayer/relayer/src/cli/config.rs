@@ -2,6 +2,7 @@
 
 use std::str::FromStr;
 
+use alloy::primitives::Address;
 use serde_json::Value;
 use tracing::Level;
 
@@ -35,20 +36,29 @@ pub struct ModuleConfig {
 pub enum ModuleVariant {
     #[serde(alias = "cosmos_to_eth")]
     CosmosToEth(CosmosToEthConfig),
+    #[serde(alias = "eth_to_cosmos")]
+    EthToCosmos(EthToCosmosConfig),
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct CosmosToEthConfig {
     pub port: u16,
-    pub ics26_router: String,
+    pub ics26_router: Address,
     pub ics02_client: String,
-    pub ics07_tendermint: String,
+    pub ics07_tendermint: Address,
     pub eth_rpc_url: String,
     pub tm_rpc_url: String,
     pub eth_private_key: String,
     //pub sp1_private_key: String,
     pub prover_url: String,
     /// Whether the module is enabled.
+    #[serde(default = "default_true")]
+    pub enabled: bool,
+}
+
+// TODO: MACIEK: config for eth to cosmos
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub struct EthToCosmosConfig {
     #[serde(default = "default_true")]
     pub enabled: bool,
 }

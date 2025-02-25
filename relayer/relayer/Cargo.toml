@@ -1,35 +1,30 @@
 [package]
-name       = "celestia-relayer"
-version    = { workspace = true }
-edition    = { workspace = true }
-repository = { workspace = true }
-license    = { workspace = true }
+name = "celestia-relayer"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [dependencies]
-ibc-eureka-relayer-lib = { workspace = true, default-features = true }
-prover-client.workspace = true
-
-ibc-eureka-solidity-types.workspace = true
-
-tokio = { workspace = true, default-features = true }
-tonic = { workspace = true, default-features = true }
-
-tracing            = { workspace = true, default-features = true }
-tracing-subscriber = { workspace = true, default-features = true }
-clap               = { workspace = true, default-features = true }
-anyhow             = { workspace = true, default-features = true }
-futures            = { workspace = true, default-features = true }
-
-serde      = { workspace = true, default-features = true }
-serde_json = { workspace = true, default-features = true }
-prost      = { workspace = true, default-features = true }
-
 alloy = { workspace = true, features = ["full", "node-bindings"] }
 alloy-network.workspace = true
 alloy-signer-local.workspace = true
-
-tendermint     = { workspace = true }
-tendermint-rpc = { workspace = true }
+anyhow.workspace = true
+clap.workspace = true
+futures.workspace = true
+ibc-eureka-relayer-lib.workspace = true
+ibc-eureka-solidity-types.workspace = true
+prost.workspace = true
+prover-client.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tendermint-rpc.workspace = true
+tendermint.workspace = true
+tokio.workspace = true
+tonic.workspace = true
+tonic-reflection = "0.12.0"
+tracing-subscriber.workspace = true
+tracing.workspace = true
 
 [build-dependencies]
 tonic-build = { workspace = true, default-features = true }

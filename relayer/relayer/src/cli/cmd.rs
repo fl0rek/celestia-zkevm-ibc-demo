@@ -15,7 +15,7 @@ pub struct RelayerCli {
 /// The subcommands for the relayer.
 #[derive(Clone, Debug, Parser)]
 pub enum Commands {
-    /// The subcommand to run the relayer.
+    Start,
     UpdateClient,
     ForwardPackets(ForwardPacketsArgs),
 }
