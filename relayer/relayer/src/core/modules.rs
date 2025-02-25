@@ -11,7 +11,6 @@ pub trait ModuleServer: Send + Sync + 'static {
     /// Configuration for the module server
     type Config;
 
-
     /// Serve the relayer module RPC on the given address.
     async fn serve(
         &self,

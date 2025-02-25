@@ -161,7 +161,6 @@ impl ModuleServer for EthToCosmosRelayerModule {
         config: EthToCosmosConfig,
         addr: SocketAddr,
     ) -> Result<(), tonic::transport::Error> {
-
         let server = EthToCosmosRelayerModuleServer::new(config).await;
 
         tracing::info!(%addr, "Started Cosmos to Ethereum relayer server.");

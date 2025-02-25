@@ -2,11 +2,11 @@ use std::path::PathBuf;
 
 use alloy::providers::ProviderBuilder;
 use alloy::sol_types::SolValue;
-use alloy_network::{EthereumWallet, ReceiptResponse};
-use alloy_signer_local::PrivateKeySigner;
+use alloy_network::ReceiptResponse;
 use celestia_relayer::cli::cmd::{Commands, ForwardPacketsArgs, RelayerCli};
 use celestia_relayer::cli::config::{ModuleVariant, RelayerConfig};
 use celestia_relayer::core::builder::RelayerBuilder;
+use celestia_relayer::modules::cosmos_to_eth::wallet_from_key;
 use clap::Parser;
 use ibc_eureka_relayer_lib::listener::cosmos_sdk::ChainListener;
 use ibc_eureka_relayer_lib::listener::ChainListenerService;
@@ -33,7 +33,6 @@ async fn main() -> anyhow::Result<()> {
         Commands::Start => {
             let relayer = RelayerBuilder;
             relayer.start(config).await?;
-
         }
         Commands::UpdateClient => {
             // TODO: this assumes config has cosmos_to_eth config in the first slot
@@ -47,8 +46,6 @@ async fn main() -> anyhow::Result<()> {
                 prover_client::CelestiaProverClient::with_url(test_config.prover_url.clone())?;
             let prover_info = prover_client.info().await?;
             tracing::info!("prover up: {prover_info:?}");
-
-            //let vkey: [u8; 32] = hex::const_decode_to_array(prover_info.state_transition_vkey.as_bytes())?;
 
             let transition_proof = prover_client
                 .prove_state_transition(test_config.ics07_tendermint)
@@ -69,8 +66,7 @@ async fn main() -> anyhow::Result<()> {
                 .with_recommended_fillers()
                 .wallet(wallet)
                 .on_http(test_config.eth_rpc_url.parse()?);
-            let contract =
-                sp1_ics07_tendermint::new(test_config.ics07_tendermint, provider);
+            let contract = sp1_ics07_tendermint::new(test_config.ics07_tendermint, provider);
 
             let update_receipt = contract
                 .updateClient(update_msg.abi_encode().into())
@@ -108,9 +104,4 @@ async fn main() -> anyhow::Result<()> {
         }
     };
     Ok(())
-}
-
-fn wallet_from_key(key: &str) -> anyhow::Result<EthereumWallet> {
-    let signer: PrivateKeySigner = key.strip_suffix("0x").unwrap_or(key).parse()?;
-    Ok(EthereumWallet::from(signer))
 }

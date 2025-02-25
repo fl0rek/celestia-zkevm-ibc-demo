@@ -2,10 +2,10 @@
 
 use futures::future;
 
-use crate::cli::config::{RelayerConfig, ModuleVariant};
+use crate::cli::config::{ModuleVariant, RelayerConfig};
 
-use crate::modules::cosmos_to_eth::CosmosToEthRelayerModule;
 use super::modules::ModuleServer;
+use crate::modules::cosmos_to_eth::CosmosToEthRelayerModule;
 
 // TODO: something fancier than static fields for each supported module?
 //  with options for modules from different crates idk
@@ -20,7 +20,6 @@ impl RelayerBuilder {
     /// Start the relayer server.
     #[allow(clippy::pedantic)]
     pub async fn start(self, config: RelayerConfig) -> anyhow::Result<()> {
-
         // Ensure the starting port and address are set
         let address = config.server.address;
 
@@ -47,31 +46,14 @@ impl RelayerBuilder {
                             tracing::error!(%err, "Failed to start cosmos to eth module");
                         }
                     }));
-                },
+                }
                 ModuleVariant::EthToCosmos(config) => {
                     if !config.enabled {
                         continue;
                     }
                 }
-
             }
         }
-
-
-        // TODO: configurable
-        tasks.push(tokio::spawn(async move {
-            let addr = "127.0.0.1:4000".parse().unwrap();
-
-            let reflection_service = tonic_reflection::server::Builder::configure() 
-                .register_encoded_file_descriptor_set(
-                    crate::api::FILE_DESCRIPTOR_SET)
-                .build_v1() 
-                .unwrap(); 
-            tonic::transport::Server::builder() 
-                .add_service(reflection_service)
-                .serve(addr) 
-            .await.unwrap();
-        }));
 
         // Wait for all tasks to complete
         future::try_join_all(tasks).await?;

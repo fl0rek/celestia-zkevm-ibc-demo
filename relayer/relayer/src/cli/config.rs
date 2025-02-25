@@ -54,6 +54,8 @@ pub struct CosmosToEthConfig {
     /// Whether the module is enabled.
     #[serde(default = "default_true")]
     pub enabled: bool,
+    #[serde(default = "default_true")]
+    pub reflection_service: bool,
 }
 
 // TODO: MACIEK: config for eth to cosmos

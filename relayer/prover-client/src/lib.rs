@@ -68,13 +68,23 @@ impl CelestiaProverClient<Channel> {
 
 impl grpc::FromGrpcResponse<ProverInfo> for grpc::InfoResponse {
     fn try_from_response(self) -> Result<ProverInfo> {
-        todo!()
+        Ok(ProverInfo {
+            state_transition_vkey: self.state_transition_verifier_key,
+            state_membership_vkey: self.state_membership_verifier_key,
+        })
     }
 }
 
 impl grpc::FromGrpcResponse<StateTransitionProof> for grpc::ProveStateTransitionResponse {
     fn try_from_response(self) -> Result<StateTransitionProof> {
-        todo!()
+        let grpc::ProveStateTransitionResponse {
+            proof,
+            public_values,
+        } = self;
+        Ok(StateTransitionProof {
+            proof,
+            public_values,
+        })
     }
 }
 

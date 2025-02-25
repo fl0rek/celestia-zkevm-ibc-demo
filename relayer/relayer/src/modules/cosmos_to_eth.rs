@@ -8,7 +8,8 @@ use alloy::{
     providers::{ProviderBuilder, RootProvider},
     transports::BoxTransport,
 };
-use alloy_network::ReceiptResponse;
+use alloy_network::{EthereumWallet, ReceiptResponse};
+use alloy_signer_local::PrivateKeySigner;
 use ibc_eureka_relayer_lib::listener::{cosmos_sdk, eth_eureka};
 use ibc_eureka_solidity_types::sp1_ics07::{
     sp1_ics07_tendermint, ISP1Msgs::SP1Proof, IUpdateClientMsgs::MsgUpdateClient,
@@ -170,10 +171,10 @@ impl RelayerService for CosmosToEthRelayerModuleServer {
 
         // TODO: error on status == 0
 
-        tracing::trace!("Transaction hash: {:?}", update_receipt.block_hash());
-        tracing::trace!("Block number: {:?}", update_receipt.block_number());
-        tracing::trace!("Gas used: {:?}", update_receipt.gas_used());
-        tracing::trace!("Successful: {:?}", update_receipt.status());
+        tracing::info!("Transaction hash: {:?}", update_receipt.block_hash());
+        tracing::info!("Block number: {:?}", update_receipt.block_number());
+        tracing::info!("Gas used: {:?}", update_receipt.gas_used());
+        tracing::info!("Successful: {:?}", update_receipt.status());
 
         Ok(Response::new(api::UpdateClientResponse {
             tx_hash: update_receipt.transaction_hash().to_string(),
@@ -217,9 +218,26 @@ impl ModuleServer for CosmosToEthRelayerModule {
 
         tracing::info!(%addr, "Started Cosmos to Ethereum relayer server.");
 
+        let reflection_service = if config.reflection_service {
+            Some(
+                tonic_reflection::server::Builder::configure()
+                    .register_encoded_file_descriptor_set(crate::api::FILE_DESCRIPTOR_SET)
+                    .build_v1()
+                    .expect("failed to set up reflection service"),
+            )
+        } else {
+            None
+        };
+
         Server::builder()
             .add_service(RelayerServiceServer::new(server))
+            .add_optional_service(reflection_service)
             .serve(addr)
             .await
     }
+}
+
+pub fn wallet_from_key(key: &str) -> anyhow::Result<EthereumWallet> {
+    let signer: PrivateKeySigner = key.strip_suffix("0x").unwrap_or(key).parse()?;
+    Ok(EthereumWallet::from(signer))
 }
