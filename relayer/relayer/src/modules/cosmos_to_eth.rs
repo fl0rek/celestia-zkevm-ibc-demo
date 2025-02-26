@@ -2,33 +2,36 @@
 
 use std::{net::SocketAddr, str::FromStr};
 
+use alloy::network::{EthereumWallet, ReceiptResponse};
+use alloy::primitives::Address;
+use alloy::providers::fillers::{FillProvider, JoinFill, WalletFiller};
+use alloy::providers::{Identity, ProviderBuilder, RootProvider};
+use alloy::signers::local::PrivateKeySigner;
 use alloy::sol_types::SolValue;
-use alloy::{
-    primitives::Address,
-    providers::{ProviderBuilder, RootProvider},
-    transports::BoxTransport,
-};
-use alloy_network::{EthereumWallet, ReceiptResponse};
-use alloy_signer_local::PrivateKeySigner;
+use alloy::transports::BoxTransport;
+use alloy_network::Ethereum;
+use ibc_eureka_relayer_lib::listener::eth_eureka::ChainListener;
 use ibc_eureka_relayer_lib::listener::{cosmos_sdk, eth_eureka};
 use ibc_eureka_solidity_types::sp1_ics07::{
     sp1_ics07_tendermint, ISP1Msgs::SP1Proof, IUpdateClientMsgs::MsgUpdateClient,
 };
 use prover_client::CelestiaProverClient;
 use tendermint_rpc::{HttpClient, Url};
-use tonic::{
-    transport::{self, Server},
-    Request, Response,
-};
+use tonic::transport::{self, Server};
+use tonic::{Request, Response};
 
+use crate::api;
+use crate::api::relayer_service_server::{RelayerService, RelayerServiceServer};
 use crate::cli::config::CosmosToEthConfig;
-use crate::{
-    api::{
-        self,
-        relayer_service_server::{RelayerService, RelayerServiceServer},
-    },
-    core::modules::ModuleServer,
-};
+use crate::core::modules::ModuleServer;
+
+type EthProvider = FillProvider<
+    JoinFill<Identity, WalletFiller<EthereumWallet>>,
+    RootProvider<BoxTransport>,
+    BoxTransport,
+    Ethereum,
+>;
+type EthChainListener = ChainListener<BoxTransport, EthProvider>;
 
 /// The `CosmosToEthRelayerModule` struct defines the Cosmos to Ethereum relayer module.
 #[derive(Clone, Copy, Debug)]
@@ -40,7 +43,7 @@ struct CosmosToEthRelayerModuleServer {
     /// The chain listener for Cosmos SDK.
     pub tm_listener: cosmos_sdk::ChainListener,
     /// The chain listener for `EthEureka`.
-    pub eth_listener: eth_eureka::ChainListener<BoxTransport, RootProvider<BoxTransport>>,
+    pub eth_listener: EthChainListener,
 
     /// Address of the ICS07 Tendermint contract
     pub ics07_address: Address,
@@ -49,7 +52,7 @@ struct CosmosToEthRelayerModuleServer {
     pub prover_client: CelestiaProverClient<transport::Channel>,
     // /// The transaction builder for `EthEureka`.
     //pub tx_builder: TxBuilder<BoxTransport, RootProvider<BoxTransport>>,
-    eth_provider: RootProvider<BoxTransport>,
+    eth_provider: EthProvider,
 }
 
 /// The configuration for the Cosmos to Ethereum relayer module.
@@ -66,7 +69,8 @@ pub struct CosmosToEthArgs {
     pub ics07_address: Address,
     /// The SP1 prover network private key.
     pub prover_url: String,
-    //pub wallet: EthereumWallet,
+    /// Eth private key
+    pub eth_private_key: String,
 }
 
 impl CosmosToEthRelayerModuleServer {
@@ -79,13 +83,14 @@ impl CosmosToEthRelayerModuleServer {
 
         let tm_listener = cosmos_sdk::ChainListener::new(tm_client.clone());
 
-        // TODO: probably needs wallet
-        let provider = ProviderBuilder::new()
+        let wallet = wallet_from_key(&args.eth_private_key).expect("valid private key");
+        let eth_provider = ProviderBuilder::new()
+            .wallet(wallet)
             .on_builtin(&args.eth_rpc_url)
             .await
             .unwrap_or_else(|e| panic!("failed to create provider: {e}"));
 
-        let eth_listener = eth_eureka::ChainListener::new(args.ics26_address, provider.clone());
+        let eth_listener = eth_eureka::ChainListener::new(args.ics26_address, eth_provider.clone());
 
         // XXX: align errors
         let prover_client = CelestiaProverClient::with_url(args.prover_url).unwrap();
@@ -95,7 +100,7 @@ impl CosmosToEthRelayerModuleServer {
             eth_listener,
             ics07_address: args.ics07_address,
             prover_client,
-            eth_provider: provider,
+            eth_provider,
         }
     }
 }
@@ -212,6 +217,7 @@ impl ModuleServer for CosmosToEthRelayerModule {
             ics07_address: config.ics07_tendermint,
             eth_rpc_url: config.eth_rpc_url,
             prover_url: config.prover_url,
+            eth_private_key: config.eth_private_key,
         };
 
         let server = CosmosToEthRelayerModuleServer::new(args).await;
